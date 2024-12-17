@@ -58,6 +58,8 @@ public class GameManager : MonoBehaviour
         CreatePlayer();
         startDayButton.gameObject.SetActive(false);
         startNightButton.gameObject.SetActive(true);
+        
+        gridManager.EnableShadows();
     }
     
     public void StartNight()
@@ -65,6 +67,8 @@ public class GameManager : MonoBehaviour
         RemovePlayer();        
         startDayButton.gameObject.SetActive(true);
         startNightButton.gameObject.SetActive(false);
+        
+        gridManager.DisableShadows();
     }
     
     public void RestartGame()
