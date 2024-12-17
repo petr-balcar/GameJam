@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
@@ -45,10 +46,38 @@ public class GridManager : MonoBehaviour
         {
             _obstacleMap[x, y] = true;
             var position = new Vector3(x * cellSize, y * cellSize, 0);
-            Instantiate(obstaclePrefab, position, Quaternion.identity);
+            var obstacleObject = Instantiate(obstaclePrefab, position, Quaternion.identity);
+            var obstacle = obstacleObject.GetComponent<Obstacle>();
+            obstacle.gridManager = this;
         }
     }
 
+    public int GetGridCoordinate(float x)
+    {
+        return (int) Math.Round(x, 0, MidpointRounding.AwayFromZero);
+    }
+    
+    public void MoveObstacle(Obstacle obstacle, int x, int y)
+    {
+        var isInGrid = x >= 0 && x < gridWidth && y >= 0 && y < gridHeight;
+        var isEmpty = _obstacleMap[x, y] == false;
+        
+        if (isInGrid && isEmpty)
+        {
+            _obstacleMap[obstacle.x, obstacle.y] = false;
+            _obstacleMap[x, y] = true;
+
+            obstacle.transform.position = new Vector3(x, y, 0);
+            
+            obstacle.x = x;
+            obstacle.y = y;
+        }
+        else
+        {
+            obstacle.transform.position = new Vector3(obstacle.x, obstacle.y, 0);
+        }
+    }
+    
     public bool IsObstacleAt(int x, int y)
     {
         if (x >= 0 && x < gridWidth && y >= 0 && y < gridHeight)
