@@ -4,7 +4,8 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public Text messageText;
-    public string message = "Game Over!";
+    public string finishMessage = "You Won!";
+    public string deathMessage = "You Died!";
 
     public GameObject playerPrefab;
     private GameObject _playerObject;
@@ -22,12 +23,17 @@ public class GameManager : MonoBehaviour
     
     private void Update()
     {
-        if (_player is not null && _player.reachedFinish)
+        if (_player is null) return;
+        
+        if (_player.reachedFinish)
         {
-            Time.timeScale = 0f;
-            ShowMessage(message);
-            startDayButton.gameObject.SetActive(false);
-            startNightButton.gameObject.SetActive(false);
+            ShowMessage(finishMessage);
+            StopGame();
+        } 
+        else if (_player.died)
+        {
+            ShowMessage(deathMessage);
+            StopGame();
         }
     }
 
@@ -70,11 +76,19 @@ public class GameManager : MonoBehaviour
         
         gridManager.DisableShadows();
     }
+
+    public void StopGame()
+    {
+        Time.timeScale = 0f;
+        startDayButton.gameObject.SetActive(false);
+        startNightButton.gameObject.SetActive(false);
+    }
     
     public void RestartGame()
     {
         Time.timeScale = 1f;
         RemovePlayer();
+        gridManager.DisableShadows();
         
         messageText.gameObject.SetActive(false);
         startDayButton.gameObject.SetActive(true);

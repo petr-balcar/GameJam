@@ -45,9 +45,17 @@ public class GridManager : MonoBehaviour
         return x >= 0 && x < gridWidth && y >= 0 && y < gridHeight;
     }
     
-    public bool IsObstacle(int x, int y)
+    public bool IsObstacleAt(int x, int y)
     {
-        return _obstacleMap[x, y];
+        return IsInGrid(x, y) ? _obstacleMap[x, y] : false; 
+    }
+    
+    public bool IsSafe(int x, int y)
+    {
+        // A tile is safe if it is in a shadow (two tiles left from an obstacle)
+        return (IsObstacleAt(x + 1, y) || IsObstacleAt(x - 1, y) || 
+                IsObstacleAt(x, y + 1) || IsObstacleAt(x - 1, y + 1) || IsObstacleAt(x + 1, y + 1) ||
+                IsObstacleAt(x, y - 1) || IsObstacleAt(x - 1, y - 1) || IsObstacleAt(x + 1, y - 1));
     }
     
     private void PlaceObstacle(int x, int y)
@@ -69,7 +77,7 @@ public class GridManager : MonoBehaviour
     
     public void MoveObstacle(Obstacle obstacle, int x, int y)
     {
-        if (IsInGrid(x, y) && !IsObstacle(x, y))
+        if (!IsObstacleAt(x, y))
         {
             _obstacleMap[obstacle.x, obstacle.y] = false;
             _obstacleMap[x, y] = true;
@@ -85,35 +93,47 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    public void ChangeCellBrightness(GameObject cell, float factor)
+    private void ChangeCellBrightness(GameObject cell, float factor)
     {
-        var renderer = cell.GetComponent<Renderer>();
-        if (renderer != null)
+        var cellRenderer = cell.GetComponent<Renderer>();
+        if (cellRenderer != null)
         {
-            Color color = renderer.material.color;
+            Color color = cellRenderer.material.color;
             color.r = Mathf.Clamp01(color.r * factor);
             color.g = Mathf.Clamp01(color.g * factor);
             color.b = Mathf.Clamp01(color.b * factor);
-            renderer.material.color = color;
+            cellRenderer.material.color = color;
         }
+    }
+
+    private void ChangeCellBrightness(int x, int y, float factor)
+    {
+        if (IsInGrid(x, y) && !IsObstacleAt(x, y))
+            ChangeCellBrightness(_grid[x, y], factor);
     }
     
     private void EnableShadow(int x, int y)
     {
-        if (IsInGrid(x - 1, y) && !IsObstacle(x - 1, y))
-            ChangeCellBrightness(_grid[x - 1, y], 0.5f);
-        
-        if (IsInGrid(x - 2, y) && !IsObstacle(x - 2, y))
-            ChangeCellBrightness(_grid[x - 2, y], 0.8f);
+        ChangeCellBrightness(x - 1, y, 0.5f);
+        ChangeCellBrightness(x + 1, y, 0.5f);
+        ChangeCellBrightness(x, y + 1, 0.5f);
+        ChangeCellBrightness(x - 1, y + 1, 0.5f);
+        ChangeCellBrightness(x + 1, y + 1, 0.5f);
+        ChangeCellBrightness(x, y - 1, 0.5f);
+        ChangeCellBrightness(x - 1, y - 1, 0.5f);
+        ChangeCellBrightness(x + 1, y - 1, 0.5f);
     }
     
     private void DisableShadow(int x, int y)
     {
-        if (IsInGrid(x - 1, y) && !IsObstacle(x - 1, y))
-            ChangeCellBrightness(_grid[x - 1, y], 2f);
-        
-        if (IsInGrid(x - 2, y)  && !IsObstacle(x - 2, y))
-            ChangeCellBrightness(_grid[x - 2, y], 1.25f);
+        ChangeCellBrightness(x - 1, y, 2f);
+        ChangeCellBrightness(x + 1, y, 2f);
+        ChangeCellBrightness(x, y + 1, 2f);
+        ChangeCellBrightness(x - 1, y + 1, 2f);
+        ChangeCellBrightness(x + 1, y + 1, 2f);
+        ChangeCellBrightness(x, y - 1, 2f);
+        ChangeCellBrightness(x - 1, y - 1, 2f);
+        ChangeCellBrightness(x + 1, y - 1, 2f);
     }
 
     public void EnableShadows()
@@ -138,14 +158,5 @@ public class GridManager : MonoBehaviour
                     DisableShadow(x, y);
             }
         }
-    }
-    
-    public bool IsObstacleAt(int x, int y)
-    {
-        if (IsInGrid(x, y))
-        {
-            return _obstacleMap[x, y];
-        }
-        return false;
     }
 }

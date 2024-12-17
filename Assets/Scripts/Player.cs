@@ -11,7 +11,8 @@ public class Player : MonoBehaviour
     
     public Vector2Int startingPosition = new Vector2Int(0, 7);
     
-    public bool reachedFinish;
+    public bool reachedFinish = false;
+    public bool died = false;
     
     private void Start()
     {
@@ -38,6 +39,10 @@ public class Player : MonoBehaviour
             if (transform.position == _targetPosition)
             {
                 _isMoving = false;
+                if (!gridManager.IsSafe(_currentGridPosition.x, _currentGridPosition.y))
+                {
+                    died = true;
+                }
             }
         }
     }
