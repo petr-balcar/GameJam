@@ -51,12 +51,6 @@ public class Player : MonoBehaviour
     {
         var newGridPosition = _currentGridPosition + direction;
 
-        if (newGridPosition == gridManager.finish)
-        {
-            reachedFinish = true;
-            return;
-        }
-        
         newGridPosition.x = Mathf.Clamp(newGridPosition.x, 0, gridManager.gridWidth - 1);
         newGridPosition.y = Mathf.Clamp(newGridPosition.y, 0, gridManager.gridHeight - 1);
 

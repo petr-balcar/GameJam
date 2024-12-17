@@ -32,8 +32,9 @@ public class GridManager : MonoBehaviour
         PlaceObstacle(1, 6);
         PlaceObstacle(6, 6);
         PlaceObstacle(1, 1);
+        PlaceObstacle(1, 3);
         
-        PlaceGarlic(5,5);
+        PlaceGarlic(3,5);
         
         PlaceCross(2,2);
     }
@@ -50,6 +51,9 @@ public class GridManager : MonoBehaviour
                 _obstacleMap[x, y] = false;
             }
         }
+        
+        // Instantiate(cellPrefab, new Vector3(-1 * cellSize, 7 * cellSize, 2), Quaternion.identity);
+        // Instantiate(cellPrefab, new Vector3(8 * cellSize, 0 * cellSize, 2), Quaternion.identity);
     }
 
     public bool IsDay()
