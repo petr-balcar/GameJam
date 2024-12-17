@@ -19,6 +19,8 @@ public class Obstacle : MonoBehaviour
 
     private void Update()
     {
+        if (gridManager.IsDay()) return;
+        
         if (_isDragging)
         {
             var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -28,11 +30,14 @@ public class Obstacle : MonoBehaviour
 
     public void OnMouseDown()
     {
+        if (gridManager.IsDay()) return;
         _isDragging = true;
     }
 
     public void OnMouseUp()
     {
+        if (gridManager.IsDay()) return;
+        
         _isDragging = false;
 
         var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);

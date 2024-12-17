@@ -504,6 +504,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cellPrefab: {fileID: 1934257930597750785, guid: 6774dbf59df8f984b98a91ea18b515f6, type: 3}
   obstaclePrefab: {fileID: 2963026154102628172, guid: 955e456840132ad4784d0ca308d22fd6, type: 3}
+  garlicPrefab: {fileID: 362507113344033577, guid: 43ee80c6d3122ab49ba4357ac2435c52, type: 3}
+  gameManager: {fileID: 841373780}
   gridWidth: 8
   gridHeight: 8
   cellSize: 1
@@ -574,6 +576,7 @@ MonoBehaviour:
   startDayButton: {fileID: 953155178}
   startNightButton: {fileID: 2002822528}
   gridManager: {fileID: 690502834}
+  isDay: 0
 --- !u!1 &953155176
 GameObject:
   m_ObjectHideFlags: 0
