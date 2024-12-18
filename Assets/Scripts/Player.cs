@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -113,7 +114,7 @@ public class Player : MonoBehaviour
         reachedFinish = true;
     }
     
-    private IEnumerator Die()
+    public IEnumerator Die()
     {
         animator.SetBool("isDead", true);
         moveSpeed = 0;
@@ -122,7 +123,7 @@ public class Player : MonoBehaviour
         {
             yield return null;
         }
-        
+
         died = true;
     }
     

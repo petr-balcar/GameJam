@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
@@ -24,26 +25,16 @@ public class GridManager : MonoBehaviour
     private bool[,] _garlicMap;
     private bool[,] _crossMap;
 
+    private List<GameObject> _objects = new List<GameObject>();
+    
     private void Start()
     {
         _grid = new GameObject[gridWidth, gridHeight];
         _obstacleMap = new bool[gridWidth, gridHeight];
         _garlicMap = new bool[gridWidth, gridHeight];
         _crossMap = new bool[gridWidth, gridHeight];
-        
-        GenerateGrid();
-        
-        PlaceObstacle(1, 6);
-        PlaceObstacle(6, 6);
-        PlaceObstacle(1, 1);
-        PlaceObstacle(1, 3);
-        
-        PlaceGarlic(3,5);
-        
-        PlaceCross(2,2);
 
-        ColorAll();
-        ColorDanger();
+        GenerateGrid();
     }
 
     private void GenerateGrid()
@@ -62,6 +53,84 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    private void ClearLevel()
+    {
+        foreach (var gameObj in _objects) {
+            Destroy(gameObj);
+        }
+        
+        for (var x = 0; x < gridWidth; x++)
+        {
+            for (var y = 0; y < gridHeight; y++)
+            {
+                _obstacleMap[x, y] = false;
+                _garlicMap[x, y] = false;
+                _crossMap[x, y] = false;
+            }
+        }
+    }
+    
+    public void LoadLevel(int level)
+    {
+        ClearLevel();
+        
+        switch (level)
+        {
+            case 1:
+                LoadLevel1();
+                break;
+            case 2:
+                LoadLevel2();
+                break;
+            case 3:
+                LoadLevel3();
+                break;
+            case 4:
+                LoadLevel4();
+                break;
+        }
+        
+        ColorAll();
+        ColorDanger();
+    }
+
+    private void LoadLevel1()
+    {
+        PlaceObstacle(1, 6);
+        PlaceObstacle(6, 6);
+        PlaceObstacle(1, 1);
+    }
+    
+    private void LoadLevel2()
+    {
+        PlaceObstacle(1, 6);
+        PlaceObstacle(6, 6);
+        PlaceObstacle(1, 1);
+        PlaceGarlic(3,5);
+        PlaceGarlic(3,6);
+        PlaceGarlic(3,7);
+        PlaceGarlic(2,1);
+    }
+    
+    private void LoadLevel3()
+    {
+        PlaceObstacle(1, 6);
+        PlaceObstacle(6, 6);
+        PlaceObstacle(1, 1);
+        PlaceObstacle(1, 3);
+        PlaceCross(2,2);
+    }
+    
+    private void LoadLevel4()
+    {
+        PlaceObstacle(1, 6);
+        PlaceObstacle(6, 6);
+        PlaceObstacle(1, 1);
+        PlaceObstacle(1, 3);
+        PlaceGarlic(3,5);
+        PlaceCross(2,2);
+    }
+    
     public bool IsDay()
     {
         return gameManager.isDay;
@@ -156,6 +225,7 @@ public class GridManager : MonoBehaviour
             var obstacleObject = Instantiate(obstaclePrefab, position, Quaternion.identity);
             var obstacle = obstacleObject.GetComponent<Obstacle>();
             obstacle.gridManager = this;
+            _objects.Add(obstacleObject);
         }
     }
 
@@ -163,7 +233,8 @@ public class GridManager : MonoBehaviour
     {
         _garlicMap[x, y] = true;
         var position = new Vector3(x * cellSize, y * cellSize, 1);
-        Instantiate(garlicPrefab, position, Quaternion.identity);
+        var garlicObject = Instantiate(garlicPrefab, position, Quaternion.identity);
+        _objects.Add(garlicObject);
     }
 
     private void ColorCell(int x, int y, string type)
@@ -261,7 +332,8 @@ public class GridManager : MonoBehaviour
     {
         _crossMap[x, y] = true;
         var position = new Vector3(x * cellSize, y * cellSize, 1);
-        Instantiate(crossPrefab, position, Quaternion.identity);
+        var crossObject = Instantiate(crossPrefab, position, Quaternion.identity);
+        _objects.Add(crossObject);
     }
     
     public int GetGridCoordinate(float x)
