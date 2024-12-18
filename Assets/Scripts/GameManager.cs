@@ -76,6 +76,7 @@ public class GameManager : MonoBehaviour
         startDayButton.gameObject.SetActive(false);
         startNightButton.gameObject.SetActive(true);
         SetLight();
+        gridManager.ColorAll();
     }
     
     public void StartNight()
@@ -86,6 +87,7 @@ public class GameManager : MonoBehaviour
         startDayButton.gameObject.SetActive(true);
         startNightButton.gameObject.SetActive(false);
         SetDark();
+        gridManager.ColorDanger();
     }
 
     public void StopGame()

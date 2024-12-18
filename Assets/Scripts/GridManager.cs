@@ -10,13 +10,14 @@ public class GridManager : MonoBehaviour
 
     public Sprite dangerCell;
     public Sprite gridCell;
+    public Sprite goldCell;
     
     public GameManager gameManager;
     public int gridWidth = 8;
     public int gridHeight = 8;
     public float cellSize = 1.0f;
 
-    public Vector2Int finish = new Vector2Int(8, 0);
+    public Vector2Int finish = new Vector2Int(7, 0);
     
     private GameObject[,] _grid;
     private bool[,] _obstacleMap;
@@ -40,6 +41,9 @@ public class GridManager : MonoBehaviour
         PlaceGarlic(3,5);
         
         PlaceCross(2,2);
+
+        ColorAll();
+        ColorDanger();
     }
 
     private void GenerateGrid()
@@ -56,9 +60,6 @@ public class GridManager : MonoBehaviour
                 _crossMap[x, y] = false;
             }
         }
-        
-        // Instantiate(cellPrefab, new Vector3(-1 * cellSize, 7 * cellSize, 2), Quaternion.identity);
-        // Instantiate(cellPrefab, new Vector3(8 * cellSize, 0 * cellSize, 2), Quaternion.identity);
     }
 
     public bool IsDay()
@@ -163,21 +164,38 @@ public class GridManager : MonoBehaviour
         _garlicMap[x, y] = true;
         var position = new Vector3(x * cellSize, y * cellSize, 1);
         Instantiate(garlicPrefab, position, Quaternion.identity);
-        ColorCell(x, y, true);
     }
 
-    private void ColorCell(int x, int y, bool danger)
+    private void ColorCell(int x, int y, string type)
     {
         var cell = _grid[x, y];
         var cellRenderer = cell.GetComponent<SpriteRenderer>();
-        if (danger)
+        if (type == "danger")
         {
             cellRenderer.sprite = dangerCell;
         }
-        else
+        else if (type == "normal")
         {
             cellRenderer.sprite = gridCell;
         }
+        else if (type == "gold")
+        {
+            cellRenderer.sprite = goldCell;
+        }
+    }
+
+    public void ColorAll()
+    {
+        for (var x = 0; x < gridWidth; x++)
+        {
+            for (var y = 0; y < gridHeight; y++)
+            {
+                ColorCell(x, y, "normal");
+            }
+        }
+
+        ColorCell(0, 7, "gold");
+        ColorCell(7, 0, "gold");
     }
 
     private void ColorCross(int x, int y)
@@ -187,7 +205,7 @@ public class GridManager : MonoBehaviour
         while (right < gridWidth)
         {
             if (_obstacleMap[right, y]) isDanger = false;
-            ColorCell(right, y, isDanger);
+            ColorCell(right, y, isDanger ? "danger" : "normal");
             
             right++;
         }
@@ -197,7 +215,7 @@ public class GridManager : MonoBehaviour
         while (left >= 0)
         {
             if (_obstacleMap[left, y]) isDanger = false; 
-            ColorCell(left, y, isDanger);
+            ColorCell(left, y, isDanger ? "danger" : "normal");
             left--;
         }
         
@@ -206,7 +224,7 @@ public class GridManager : MonoBehaviour
         while (up < gridHeight)
         {
             if (_obstacleMap[x, up]) isDanger = false;
-            ColorCell(x, up, isDanger);
+            ColorCell(x, up, isDanger ? "danger" : "normal");
             up++;
         }
         
@@ -215,12 +233,12 @@ public class GridManager : MonoBehaviour
         while (down >= 0)
         {
             if (_obstacleMap[x, down]) isDanger = false;
-            ColorCell(x, down, isDanger);  
+            ColorCell(x, down, isDanger ? "danger" : "normal");  
             down--;
         }
     }
 
-    private void ColorCrosses()
+    public void ColorDanger()
     {
         for (var x = 0; x < gridWidth; x++)
         {
@@ -229,6 +247,11 @@ public class GridManager : MonoBehaviour
                 if (_crossMap[x, y])
                 {
                     ColorCross(x, y);
+                }
+
+                if (_garlicMap[x, y])
+                {
+                    ColorCell(x, y, "danger");
                 }
             }
         }
@@ -239,8 +262,6 @@ public class GridManager : MonoBehaviour
         _crossMap[x, y] = true;
         var position = new Vector3(x * cellSize, y * cellSize, 1);
         Instantiate(crossPrefab, position, Quaternion.identity);
-
-        ColorCross(x, y);
     }
     
     public int GetGridCoordinate(float x)
@@ -260,7 +281,7 @@ public class GridManager : MonoBehaviour
             obstacle.x = x;
             obstacle.y = y;
             
-            ColorCrosses();
+            ColorDanger();
         }
         else
         {

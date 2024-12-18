@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -10,28 +12,54 @@ public class Player : MonoBehaviour
     private bool _isMoving;
     
     public Vector2Int startingPosition = new Vector2Int(0, 7);
+    public Vector2Int finishPosition = new Vector2Int(7, 0);
     
     public bool reachedFinish = false;
     public bool died = false;
+
+    public Sprite playerSprite;
+    public Sprite playerBackSprite;
+    public Sprite playerFinishedSprite;
+    
+    private Animator animator;
     
     private void Start()
     {
         _currentGridPosition = startingPosition;
         transform.position = new Vector3(startingPosition.x, startingPosition.y, 1);
+        animator = GetComponent<Animator>();
     }
 
     private void Update()
     {
         if (!_isMoving)
         {
-            if (Input.GetKey(KeyCode.W)) // Move up
+            animator.SetBool("isMoving", false);
+
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+            {
+                // Move up
                 Move(Vector2Int.up);
-            else if (Input.GetKey(KeyCode.S)) // Move down
+                animator.SetBool("isMovingUp", true);
+            }
+            else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+            {
+                // Move down
                 Move(Vector2Int.down);
-            else if (Input.GetKey(KeyCode.A)) // Move left
+                animator.SetBool("isMovingUp", false);
+            }
+            else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+            {
+                // Move left
                 Move(Vector2Int.left);
-            else if (Input.GetKey(KeyCode.D)) // Move right
+                animator.SetBool("isMovingUp", false);
+            }
+            else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+            {
+                // Move right
                 Move(Vector2Int.right);
+                animator.SetBool("isMovingUp", false);
+            }
         }
         else
         {
@@ -39,11 +67,21 @@ public class Player : MonoBehaviour
             if (transform.position == _targetPosition)
             {
                 _isMoving = false;
-                if (!gridManager.IsSafe(_currentGridPosition.x, _currentGridPosition.y))
+                
+                var finished = finishPosition == _currentGridPosition;
+                if (finished)
                 {
-                    died = true;
+                    StartCoroutine(Finish());
+                    return;
+                }
+                
+                var isAtStart = startingPosition == _currentGridPosition;
+                if (!isAtStart && !gridManager.IsSafe(_currentGridPosition.x, _currentGridPosition.y))
+                {
+                    StartCoroutine(Die());
                 }
             }
+            animator.SetBool("isMoving", true);
         }
     }
 
@@ -60,5 +98,37 @@ public class Player : MonoBehaviour
             _targetPosition = new Vector3(newGridPosition.x, newGridPosition.y, transform.position.z);
             _isMoving = true;
         }
+    }
+
+    private IEnumerator Finish()
+    {
+        animator.SetBool("isFinished", true);
+        moveSpeed = 0;
+        
+        while (!IsAnimationFinished("Finish"))
+        {
+            yield return null;
+        }
+        
+        reachedFinish = true;
+    }
+    
+    private IEnumerator Die()
+    {
+        animator.SetBool("isDead", true);
+        moveSpeed = 0;
+        
+        while (!IsAnimationFinished("Death"))
+        {
+            yield return null;
+        }
+        
+        died = true;
+    }
+    
+    private bool IsAnimationFinished(string animationName)
+    {
+        var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        return stateInfo.IsName(animationName) && stateInfo.normalizedTime >= 1f;
     }
 }
