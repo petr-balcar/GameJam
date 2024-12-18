@@ -7,6 +7,9 @@ public class GridManager : MonoBehaviour
     public GameObject obstaclePrefab;
     public GameObject garlicPrefab;
     public GameObject crossPrefab;
+
+    public Sprite dangerCell;
+    public Sprite gridCell;
     
     public GameManager gameManager;
     public int gridWidth = 8;
@@ -49,6 +52,8 @@ public class GridManager : MonoBehaviour
                 _grid[x, y] = Instantiate(cellPrefab, position, Quaternion.identity); 
                 _grid[x, y].transform.parent = transform;
                 _obstacleMap[x, y] = false;
+                _garlicMap[x, y] = false;
+                _crossMap[x, y] = false;
             }
         }
         
@@ -146,7 +151,7 @@ public class GridManager : MonoBehaviour
         if (IsInGrid(x, y) && !IsObstacleAt(x, y))
         {
             _obstacleMap[x, y] = true;
-            var position = new Vector3(x * cellSize, y * cellSize, 0);
+            var position = new Vector3(x * cellSize, y * cellSize, 1);
             var obstacleObject = Instantiate(obstaclePrefab, position, Quaternion.identity);
             var obstacle = obstacleObject.GetComponent<Obstacle>();
             obstacle.gridManager = this;
@@ -158,6 +163,75 @@ public class GridManager : MonoBehaviour
         _garlicMap[x, y] = true;
         var position = new Vector3(x * cellSize, y * cellSize, 1);
         Instantiate(garlicPrefab, position, Quaternion.identity);
+        ColorCell(x, y, true);
+    }
+
+    private void ColorCell(int x, int y, bool danger)
+    {
+        var cell = _grid[x, y];
+        var cellRenderer = cell.GetComponent<SpriteRenderer>();
+        if (danger)
+        {
+            cellRenderer.sprite = dangerCell;
+        }
+        else
+        {
+            cellRenderer.sprite = gridCell;
+        }
+    }
+
+    private void ColorCross(int x, int y)
+    {
+        var right = x;
+        var isDanger = true;
+        while (right < gridWidth)
+        {
+            if (_obstacleMap[right, y]) isDanger = false;
+            ColorCell(right, y, isDanger);
+            
+            right++;
+        }
+        
+        var left = x - 1;
+        isDanger = true;
+        while (left >= 0)
+        {
+            if (_obstacleMap[left, y]) isDanger = false; 
+            ColorCell(left, y, isDanger);
+            left--;
+        }
+        
+        var up = y;
+        isDanger = true;
+        while (up < gridHeight)
+        {
+            if (_obstacleMap[x, up]) isDanger = false;
+            ColorCell(x, up, isDanger);
+            up++;
+        }
+        
+        var down = y - 1;
+        isDanger = true;
+        while (down >= 0)
+        {
+            if (_obstacleMap[x, down]) isDanger = false;
+            ColorCell(x, down, isDanger);  
+            down--;
+        }
+    }
+
+    private void ColorCrosses()
+    {
+        for (var x = 0; x < gridWidth; x++)
+        {
+            for (var y = 0; y < gridHeight; y++)
+            {
+                if (_crossMap[x, y])
+                {
+                    ColorCross(x, y);
+                }
+            }
+        }
     }
     
     private void PlaceCross(int x, int y)
@@ -165,6 +239,8 @@ public class GridManager : MonoBehaviour
         _crossMap[x, y] = true;
         var position = new Vector3(x * cellSize, y * cellSize, 1);
         Instantiate(crossPrefab, position, Quaternion.identity);
+
+        ColorCross(x, y);
     }
     
     public int GetGridCoordinate(float x)
@@ -179,81 +255,16 @@ public class GridManager : MonoBehaviour
             _obstacleMap[obstacle.x, obstacle.y] = false;
             _obstacleMap[x, y] = true;
 
-            obstacle.transform.position = new Vector3(x, y, 0);
+            obstacle.transform.position = new Vector3(x, y, 1);
             
             obstacle.x = x;
             obstacle.y = y;
+            
+            ColorCrosses();
         }
         else
         {
-            obstacle.transform.position = new Vector3(obstacle.x, obstacle.y, 0);
-        }
-    }
-
-    private void ChangeCellBrightness(GameObject cell, float factor)
-    {
-        var cellRenderer = cell.GetComponent<Renderer>();
-        if (cellRenderer != null)
-        {
-            Color color = cellRenderer.material.color;
-            color.r = Mathf.Clamp01(color.r * factor);
-            color.g = Mathf.Clamp01(color.g * factor);
-            color.b = Mathf.Clamp01(color.b * factor);
-            cellRenderer.material.color = color;
-        }
-    }
-
-    private void ChangeCellBrightness(int x, int y, float factor)
-    {
-        if (IsInGrid(x, y) && !IsObstacleAt(x, y))
-            ChangeCellBrightness(_grid[x, y], factor);
-    }
-    
-    private void EnableShadow(int x, int y)
-    {
-        ChangeCellBrightness(x - 1, y, 0.5f);
-        ChangeCellBrightness(x + 1, y, 0.5f);
-        ChangeCellBrightness(x, y + 1, 0.5f);
-        ChangeCellBrightness(x - 1, y + 1, 0.5f);
-        ChangeCellBrightness(x + 1, y + 1, 0.5f);
-        ChangeCellBrightness(x, y - 1, 0.5f);
-        ChangeCellBrightness(x - 1, y - 1, 0.5f);
-        ChangeCellBrightness(x + 1, y - 1, 0.5f);
-    }
-    
-    private void DisableShadow(int x, int y)
-    {
-        ChangeCellBrightness(x - 1, y, 2f);
-        ChangeCellBrightness(x + 1, y, 2f);
-        ChangeCellBrightness(x, y + 1, 2f);
-        ChangeCellBrightness(x - 1, y + 1, 2f);
-        ChangeCellBrightness(x + 1, y + 1, 2f);
-        ChangeCellBrightness(x, y - 1, 2f);
-        ChangeCellBrightness(x - 1, y - 1, 2f);
-        ChangeCellBrightness(x + 1, y - 1, 2f);
-    }
-
-    public void EnableShadows()
-    {
-        for (var x = 0; x < gridWidth; x++)
-        {
-            for (var y = 0; y < gridHeight; y++)
-            {
-                if (_obstacleMap[x, y] == true)
-                    EnableShadow(x, y);
-            }
-        }
-    }
-    
-    public void DisableShadows()
-    {
-        for (var x = 0; x < gridWidth; x++)
-        {
-            for (var y = 0; y < gridHeight; y++)
-            {
-                if (_obstacleMap[x, y] == true)
-                    DisableShadow(x, y);
-            }
+            obstacle.transform.position = new Vector3(obstacle.x, obstacle.y, 1);
         }
     }
 }

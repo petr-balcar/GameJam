@@ -16,11 +16,18 @@ public class GameManager : MonoBehaviour
     
     public GridManager gridManager;
 
+    public SpriteRenderer dayBackground;
+    public SpriteRenderer nightBackground;
+    
+    public SpriteRenderer nightShadowRenderer;
+    
+    public float darkenFactor = 0.2f;
+    
     public bool isDay = false;
     
     private void Start()
     {
-        startNightButton.gameObject.SetActive(false);
+        StartNight();
     }
     
     private void Update()
@@ -47,7 +54,7 @@ public class GameManager : MonoBehaviour
 
     private void CreatePlayer()
     {
-        _playerObject = Instantiate(playerPrefab, new Vector3(0, 7, 0), Quaternion.identity);
+        _playerObject = Instantiate(playerPrefab, new Vector3(0, 7, 1), Quaternion.identity);
         _player = _playerObject.GetComponent<Player>();
         _player.gridManager = gridManager;
     }
@@ -60,7 +67,7 @@ public class GameManager : MonoBehaviour
             _player = null;
         }
     }
-    
+
     public void StartDay()
     {
         isDay = true;
@@ -68,8 +75,7 @@ public class GameManager : MonoBehaviour
         CreatePlayer();
         startDayButton.gameObject.SetActive(false);
         startNightButton.gameObject.SetActive(true);
-        
-        gridManager.EnableShadows();
+        SetLight();
     }
     
     public void StartNight()
@@ -79,8 +85,7 @@ public class GameManager : MonoBehaviour
         RemovePlayer();        
         startDayButton.gameObject.SetActive(true);
         startNightButton.gameObject.SetActive(false);
-        
-        gridManager.DisableShadows();
+        SetDark();
     }
 
     public void StopGame()
@@ -93,12 +98,23 @@ public class GameManager : MonoBehaviour
     public void RestartGame()
     {
         Time.timeScale = 1f;
-        RemovePlayer();
-        gridManager.DisableShadows();
-        isDay = false;
-        
         messageText.gameObject.SetActive(false);
-        startDayButton.gameObject.SetActive(true);
-        startNightButton.gameObject.SetActive(false);
+        StartNight();
+    }
+
+    private void SetDark()
+    {
+        nightBackground.enabled = true;
+        dayBackground.enabled = false;
+
+        nightShadowRenderer.color = new Color(0, 0, 0, 0.5f);
+    }
+    
+    private void SetLight()
+    {
+        nightBackground.enabled = false;
+        dayBackground.enabled = true;
+        
+        nightShadowRenderer.color = new Color(0, 0, 0, 0);
     }
 }
