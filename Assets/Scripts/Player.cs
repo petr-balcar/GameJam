@@ -27,7 +27,7 @@ public class Player : MonoBehaviour
     private void Start()
     {
         _currentGridPosition = startingPosition;
-        transform.position = new Vector3(startingPosition.x, startingPosition.y, 1);
+        transform.position = new Vector3(startingPosition.x, startingPosition.y, 1.5f);
         animator = GetComponent<Animator>();
     }
 

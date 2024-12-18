@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
 
     private void CreatePlayer()
     {
-        _playerObject = Instantiate(playerPrefab, new Vector3(0, 7, 1), Quaternion.identity);
+        _playerObject = Instantiate(playerPrefab, new Vector3(0, 7, 1.5f), Quaternion.identity);
         _player = _playerObject.GetComponent<Player>();
         _player.gridManager = gridManager;
     }
