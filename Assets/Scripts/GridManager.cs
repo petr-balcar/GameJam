@@ -19,6 +19,8 @@ public class GridManager : MonoBehaviour
     public Sprite gridCell4;
     
     public GameManager gameManager;
+    public SoundManager soundManager;
+    
     public int gridWidth = 8;
     public int gridHeight = 8;
     public float cellSize = 1.0f;
@@ -93,6 +95,9 @@ public class GridManager : MonoBehaviour
             case 4:
                 LoadLevel4();
                 break;
+            case 5:
+                LoadLevel5();
+                break;
         }
         
         ColorAll();
@@ -101,39 +106,56 @@ public class GridManager : MonoBehaviour
 
     private void LoadLevel1()
     {
-        PlaceObstacle(1, 6);
-        PlaceObstacle(6, 6);
+        PlaceObstacle(2, 6);
+        PlaceObstacle(6, 3);
         PlaceObstacle(1, 1);
     }
     
     private void LoadLevel2()
     {
-        PlaceObstacle(1, 6);
-        PlaceObstacle(6, 6);
+        PlaceObstacle(2, 6);
+        PlaceObstacle(6, 3);
         PlaceObstacle(1, 1);
-        PlaceGarlic(3,5);
-        PlaceGarlic(3,6);
-        PlaceGarlic(3,7);
-        PlaceGarlic(2,1);
+        PlaceGarlic(1, 4);
+        PlaceGarlic(4, 5);
+        PlaceGarlic(3, 3);
+        PlaceGarlic(6, 2);
     }
     
     private void LoadLevel3()
     {
-        PlaceObstacle(1, 6);
+        PlaceObstacle(2, 6);
+        PlaceObstacle(6, 3);
+        PlaceObstacle(1, 1);
         PlaceObstacle(6, 6);
-        PlaceObstacle(6, 6);
-        PlaceObstacle(1, 3);
-        PlaceCross(2,2);
+        PlaceCross(4, 3);
     }
     
     private void LoadLevel4()
     {
-        PlaceObstacle(1, 6);
+        PlaceObstacle(2, 6);
+        PlaceObstacle(6, 3);
+        PlaceObstacle(1, 1);
         PlaceObstacle(6, 6);
+        PlaceCross(2, 1);
+        PlaceGarlic(6,2);
+        PlaceGarlic(6,0);
+    }
+    
+    private void LoadLevel5()
+    {
+        PlaceObstacle(2, 6);
+        PlaceObstacle(6, 3);
+        PlaceObstacle(1, 1);
         PlaceObstacle(6, 6);
-        PlaceObstacle(1, 3);
         PlaceGarlic(3,5);
-        PlaceCross(2,2);
+        PlaceGarlic(3,6);
+        PlaceGarlic(3,7);
+        PlaceGarlic(3,3);
+        PlaceGarlic(3,2);
+        PlaceGarlic(3,1);
+        PlaceGarlic(3,0);
+        PlaceCross(6, 4);
     }
     
     public bool IsDay()
@@ -386,6 +408,8 @@ public class GridManager : MonoBehaviour
             obstacle.y = y;
             
             ColorDanger();
+            
+            soundManager.PlayLeaf();
         }
         else
         {

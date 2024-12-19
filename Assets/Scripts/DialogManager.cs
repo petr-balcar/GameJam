@@ -9,6 +9,9 @@ public class DialogManager : MonoBehaviour
     public TextMeshProUGUI dialogText; // Reference to the Text element
     public Button nextButton; // Reference to the Button element (optional)
     public Component DialogPanel;
+
+    public SoundManager soundManager;
+    public Image blockerImage;
     
     private Queue<string> sentences = new Queue<string>();
 
@@ -19,6 +22,7 @@ public class DialogManager : MonoBehaviour
 
     public void StartDialog(string[] dialogSentences)
     {
+        blockerImage.gameObject.SetActive(true);
         DialogPanel.gameObject.SetActive(true);
         sentences.Clear();
 
@@ -48,8 +52,9 @@ public class DialogManager : MonoBehaviour
         dialogText.text = "";
         foreach (char letter in sentence.ToCharArray())
         {
+            soundManager.PlayBeep();
             dialogText.text += letter;
-            yield return null; // Wait for the next two frames before adding the next letter
+            // Wait for the next frame before adding the next letter
             yield return null;
         }
     }
@@ -57,6 +62,7 @@ public class DialogManager : MonoBehaviour
     void EndDialog()
     {
         DialogPanel.gameObject.SetActive(false);
+        blockerImage.gameObject.SetActive(false);
         dialogText.text = "";
     }
 }

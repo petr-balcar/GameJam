@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     
     public GridManager gridManager;
     public DialogManager dialogManager;
+    public SoundManager soundManager;
     
     public SpriteRenderer nightShadowRenderer;
     
@@ -62,6 +63,7 @@ public class GameManager : MonoBehaviour
         _playerObject = Instantiate(playerPrefab, new Vector3(0, 7, 1.5f), Quaternion.identity);
         _player = _playerObject.GetComponent<Player>();
         _player.gridManager = gridManager;
+        _player.soundManager = soundManager;
     }
 
     private void RemovePlayer()
@@ -87,6 +89,8 @@ public class GameManager : MonoBehaviour
     
     public void StartNight()
     {
+        soundManager.PlayBubble();
+
         isDay = false;
         
         RemovePlayer();        
@@ -167,6 +171,14 @@ public class GameManager : MonoBehaviour
                     "Also, try to use obstacles to block them."
                 };
                 dialogManager.StartDialog(dialogLevel3);
+                break;
+            case 6:
+                string[] dialogLevel6 = new string[]
+                {
+                    "Congratulations on beating the game!",
+                    "And thank you for playing <3"
+                };
+                dialogManager.StartDialog(dialogLevel6);
                 break;
         }
     }

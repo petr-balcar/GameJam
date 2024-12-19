@@ -23,6 +23,8 @@ public class Player : MonoBehaviour
     public Sprite playerSprite;
     public Sprite playerBackSprite;
     public Sprite playerFinishedSprite;
+
+    public SoundManager soundManager;
     
     private Animator animator;
     
@@ -31,6 +33,7 @@ public class Player : MonoBehaviour
         _currentGridPosition = startingPosition;
         transform.position = new Vector3(startingPosition.x, startingPosition.y, 1.5f);
         animator = GetComponent<Animator>();
+        soundManager.PlayBubble();
     }
 
     private void Update()
@@ -74,6 +77,7 @@ public class Player : MonoBehaviour
                 var finished = finishPosition == _currentGridPosition;
                 if (finished)
                 {
+                    soundManager.PlayWin();
                     StartCoroutine(Finish());
                     return;
                 }
@@ -81,6 +85,7 @@ public class Player : MonoBehaviour
                 var isAtStart = startingPosition == _currentGridPosition;
                 if (!isAtStart && !gridManager.IsSafe(_currentGridPosition.x, _currentGridPosition.y))
                 {
+                    soundManager.PlayBurn();
                     StartCoroutine(Die());
                 }
             }
@@ -102,6 +107,8 @@ public class Player : MonoBehaviour
 
         if (!gridManager.IsObstacleAt(newGridPosition.x, newGridPosition.y))
         {
+            soundManager.PlayFootstep();
+            
             _currentGridPosition = newGridPosition;
             _targetPosition = new Vector3(newGridPosition.x, newGridPosition.y, transform.position.z);
             _isMoving = true;
@@ -143,6 +150,7 @@ public class Player : MonoBehaviour
         {
             yield return null;
         }
+        
         disappeared = true;
     }
     
