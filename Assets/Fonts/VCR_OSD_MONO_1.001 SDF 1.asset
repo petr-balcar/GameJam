@@ -58,11 +58,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
-  m_Name: VCR_OSD_MONO_1.001 SDF
+  m_Name: VCR_OSD_MONO_1.001 SDF 1
   m_EditorClassIdentifier: 
-  hashCode: -2055588228
+  hashCode: -857620115
   material: {fileID: 7616644226837423946}
-  materialHashCode: -825451940
+  materialHashCode: 340344237
   m_Version: 1.1.0
   m_SourceFontFileGUID: aeee8957915098b45a4474b7e1287819
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: aeee8957915098b45a4474b7e1287819, type: 3}
@@ -1652,7 +1652,7 @@ Material:
     - _OutlineSoftness: 0
     - _OutlineUVSpeedX: 0
     - _OutlineUVSpeedY: 0
-    - _OutlineWidth: 0
+    - _OutlineWidth: 0.333
     - _PerspectiveFilter: 0.875
     - _Reflectivity: 10
     - _ScaleRatioA: 0.9
