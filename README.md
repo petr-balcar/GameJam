@@ -1,4 +1,29 @@
+# In The Shadows
+
+A game about vampires, shadows and blood.
+
+**Theme:** Night and Day
+
+**Genre:** Puzzle
+
+**Style:** Cartoony, Pixel art
+
+# Controls
+
+Move obstacles around with mouse during the night.
+Change to day by clicking the sun/moon.
+Move around using WASD or Arrow keys.
+
+# Platform
+Windows.
+
+# Known issues
+Some resolutions other than 16:9 look a little wonky.
+Could not get WebGL export to eva to work.
+
 # Sources of used assets:
+
+All other assets other than listed here were created during this game jam.
 
 ## Pixel Art:
 - Tree (top-down), Author: DigiTEX, https://www.pixilart.com/art/tree-top-down-43958cee5687aad
