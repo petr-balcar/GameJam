@@ -17,7 +17,9 @@ public class Player : MonoBehaviour
     
     public bool reachedFinish = false;
     public bool died = false;
-
+    public bool disappear = false;
+    public bool disappeared = false;
+    
     public Sprite playerSprite;
     public Sprite playerBackSprite;
     public Sprite playerFinishedSprite;
@@ -84,6 +86,11 @@ public class Player : MonoBehaviour
             }
             animator.SetBool("isMoving", true);
         }
+
+        if (disappear)
+        {
+            StartCoroutine(Disappear());
+        }
     }
 
     private void Move(Vector2Int direction)
@@ -125,6 +132,18 @@ public class Player : MonoBehaviour
         }
 
         died = true;
+    }
+    
+    public IEnumerator Disappear()
+    {
+        animator.SetBool("disappear", true);
+        moveSpeed = 0;
+        
+        while (!IsAnimationFinished("Disappear"))
+        {
+            yield return null;
+        }
+        disappeared = true;
     }
     
     private bool IsAnimationFinished(string animationName)

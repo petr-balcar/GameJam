@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 1}
+  m_LocalScale: {x: 0.85, y: 0.85, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -103,7 +103,7 @@ MonoBehaviour:
   y: 0
   shadow: {fileID: 21300000, guid: 95167e066be9a52458c61bc2e52a66c7, type: 3}
   shadowOpacity: 0.6
-  shadowScale: {x: 2, y: 2, z: 1}
+  shadowScale: {x: 1.9, y: 1.9, z: 1}
   shadowPosition: {x: -0.15, y: 0.1, z: 0}
 --- !u!61 &6367165318473876191
 BoxCollider2D:

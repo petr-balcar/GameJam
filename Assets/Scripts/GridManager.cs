@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GridManager : MonoBehaviour
 {
@@ -10,8 +12,11 @@ public class GridManager : MonoBehaviour
     public GameObject crossPrefab;
 
     public Sprite dangerCell;
-    public Sprite gridCell;
     public Sprite goldCell;
+    public Sprite gridCell1;
+    public Sprite gridCell2;
+    public Sprite gridCell3;
+    public Sprite gridCell4;
     
     public GameManager gameManager;
     public int gridWidth = 8;
@@ -116,7 +121,7 @@ public class GridManager : MonoBehaviour
     {
         PlaceObstacle(1, 6);
         PlaceObstacle(6, 6);
-        PlaceObstacle(1, 1);
+        PlaceObstacle(6, 6);
         PlaceObstacle(1, 3);
         PlaceCross(2,2);
     }
@@ -125,7 +130,7 @@ public class GridManager : MonoBehaviour
     {
         PlaceObstacle(1, 6);
         PlaceObstacle(6, 6);
-        PlaceObstacle(1, 1);
+        PlaceObstacle(6, 6);
         PlaceObstacle(1, 3);
         PlaceGarlic(3,5);
         PlaceCross(2,2);
@@ -223,6 +228,7 @@ public class GridManager : MonoBehaviour
             _obstacleMap[x, y] = true;
             var position = new Vector3(x * cellSize, y * cellSize, 1);
             var obstacleObject = Instantiate(obstaclePrefab, position, Quaternion.identity);
+            obstacleObject.transform.Rotate(Random.Range(0, 3) * 180,Random.Range(0, 3) * 180, 0);
             var obstacle = obstacleObject.GetComponent<Obstacle>();
             obstacle.gridManager = this;
             _objects.Add(obstacleObject);
@@ -232,7 +238,7 @@ public class GridManager : MonoBehaviour
     private void PlaceGarlic(int x, int y)
     {
         _garlicMap[x, y] = true;
-        var position = new Vector3(x * cellSize, y * cellSize, 1);
+        var position = new Vector3(x * cellSize, y * cellSize, 1.6f);
         var garlicObject = Instantiate(garlicPrefab, position, Quaternion.identity);
         _objects.Add(garlicObject);
     }
@@ -241,13 +247,39 @@ public class GridManager : MonoBehaviour
     {
         var cell = _grid[x, y];
         var cellRenderer = cell.GetComponent<SpriteRenderer>();
+
+        string previousType = "";
+        if (cellRenderer.sprite is not null)
+            previousType = cellRenderer.sprite.ToString();
+
         if (type == "danger")
         {
             cellRenderer.sprite = dangerCell;
         }
         else if (type == "normal")
         {
-            cellRenderer.sprite = gridCell;
+            var variant = Random.Range(1,10);
+            string[] grassCells = { gridCell1.ToString(), gridCell2.ToString(), gridCell3.ToString(), gridCell4.ToString() };
+            
+            if (grassCells.Contains(previousType)) return;
+            if (previousType == dangerCell.ToString()) variant = 9; // Set to plain square
+
+            switch (variant)
+            {
+                case 1:
+                    cellRenderer.sprite = gridCell2;
+                    break;
+                case 2:
+                    cellRenderer.sprite = gridCell3;
+                    break;
+                case 3:
+                case 4:
+                    cellRenderer.sprite = gridCell4;
+                    break;
+                default:
+                    cellRenderer.sprite = gridCell1;
+                    break;
+            }
         }
         else if (type == "gold")
         {
@@ -331,7 +363,7 @@ public class GridManager : MonoBehaviour
     private void PlaceCross(int x, int y)
     {
         _crossMap[x, y] = true;
-        var position = new Vector3(x * cellSize, y * cellSize, 1);
+        var position = new Vector3(x * cellSize, y * cellSize, 1.1f);
         var crossObject = Instantiate(crossPrefab, position, Quaternion.identity);
         _objects.Add(crossObject);
     }

@@ -14,7 +14,7 @@ public class Obstacle : MonoBehaviour
     [Range(0, 1)] public float shadowOpacity = 1.0f;
     public Vector3 shadowScale = new Vector3(1.5f, 1.5f, 1);
     public Vector3 shadowPosition = new Vector3(1, 0, 0);
-
+    
     private SpriteRenderer _shadowRenderer;
     
     private void Start()
@@ -30,7 +30,7 @@ public class Obstacle : MonoBehaviour
         _shadowRenderer = childObject.AddComponent<SpriteRenderer>();
         _shadowRenderer.sprite = shadow;
         _shadowRenderer.sortingOrder = 0;
-        _shadowRenderer.color = new Color(1f, 1f, 1f, shadowOpacity); // Set the opacity
+        _shadowRenderer.color = new Color(1f, 1f, 1f, shadowOpacity);
         _shadowRenderer.enabled = false;
     }
 

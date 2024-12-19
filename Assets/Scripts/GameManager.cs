@@ -41,8 +41,14 @@ public class GameManager : MonoBehaviour
         else if (_player.died)
         {
             ShowMessage(gameOverText);
-            RemovePlayer();
+            Destroy(_playerObject);
+            _player = null;
             StopGame();
+        } 
+        else if (_player.disappeared)
+        {
+            Destroy(_playerObject);
+            _player = null;
         }
     }
 
@@ -60,15 +66,16 @@ public class GameManager : MonoBehaviour
 
     private void RemovePlayer()
     {
-        if (_player is not null) {
-            Destroy(_playerObject);
-            _player.gridManager = null;
-            _player = null;
+        if (_player is not null)
+        {
+            _player.disappear = true;
         }
     }
 
     public void StartDay()
     {
+        if (_player is not null && _player.disappear) return; // prevent day start if player is still disappearing
+        
         isDay = true;
             
         CreatePlayer();
@@ -101,12 +108,18 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         gameOverText.gameObject.SetActive(false);
         finishedText.gameObject.SetActive(false);
+
+        if (_player)
+        {
+            Destroy(_playerObject);
+            _player = null;
+        }
         StartNight();
     }
 
     private void SetDark()
     {
-        nightShadowRenderer.color = new Color(0, 0, 0, 0.5f);
+        nightShadowRenderer.color = new Color(0, 0, 0, darkenFactor);
     }
     
     private void SetLight()
@@ -147,11 +160,11 @@ public class GameManager : MonoBehaviour
             case 3:
                 string[] dialogLevel3 = new string[]
                 {
-                    "Unbelievable, they use made crosses now…",
+                    "Unbelievable, they made crosses now…",
                     "How do they know all our weaknesses?",
                     "These are a bit trickier than just plain garlic.",
                     "Do not stand in a straight line across them, like the rook in chess!",
-                    "Also, try to use trees to block them."
+                    "Also, try to use obstacles to block them."
                 };
                 dialogManager.StartDialog(dialogLevel3);
                 break;
